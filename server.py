@@ -20,11 +20,11 @@ def handle_client(client_socket):
     # Procesar el mensaje
     if message.startswith("LIST"):
         # Verificar si hay espacio en el buffer
-        if notFull.value > 0:
+        if notFull._value > 0:
             # Agregar el mensaje al buffer
             buffer.put(message)
-            notFull.value -= 1
-            notEmpty.value += 1
+            notFull._value -= 1
+            notEmpty._value += 1
             client_socket.send("Request accepted, stored in buffer #".encode())
         else:
             client_socket.send("Request not accepted".encode())
