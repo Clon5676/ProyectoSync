@@ -4,6 +4,8 @@ import os
 import sys
 import time
 from queue import Queue, Full, Empty
+import csv
+from datetime import datetime
 
 class Server:
     def __init__(self, host, port, buffer_size, num_threads):
@@ -16,6 +18,11 @@ class Server:
         self.lock = threading.Lock()
         self.threads = []
         self.shutdown_event = threading.Event()
+        self.output_file = "output.csv"
+
+        with open(self.output_file, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Timestamp", "Client IP", "Client Port", "Request", "Thread", "Folder Contents"])
 
     def start(self):
         for _ in range(self.num_threads):
@@ -56,7 +63,7 @@ class Server:
                     if not request:
                         break
                     try:
-                        self.buffer.put(request, timeout=1)
+                        self.buffer.put((request, client_address), timeout=1)
                         client_socket.sendall(f'Request accepted and stored in buffer slot {self.buffer.qsize()}'.encode())
                         self.semaphore.release()
                     except Full:
@@ -72,19 +79,28 @@ class Server:
             if self.shutdown_event.is_set():
                 break
             try:
-                request = self.buffer.get(timeout=1)
-                self.process_request(request)
+                request, client_address = self.buffer.get(timeout=1)
+                self.process_request(request, client_address)
             except Empty:
                 continue
 
-    def process_request(self, request):
+    def process_request(self, request, client_address):
         try:
             print(f"Processing request: {request}")
             folder_content = os.listdir(request)
             response = f'Thread {threading.current_thread().name} processed request. Folder contents: {folder_content}'
             self.buffer.task_done()
+            
+            with self.lock:
+                with open(self.output_file, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([datetime.now(), client_address[0], client_address[1], request, threading.current_thread().name, folder_content])
         except Exception as e:
             response = f'Error processing request {request}: {e}'
+            with self.lock:
+                with open(self.output_file, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([datetime.now(), client_address[0], client_address[1], request, threading.current_thread().name, f"Error: {e}"])
         print(response)
 
 if __name__ == '__main__':
@@ -98,7 +114,6 @@ if __name__ == '__main__':
 
     server = Server(host, port, buffer_size, num_threads)
     server.start()
-
 
 
 
