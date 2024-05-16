@@ -33,7 +33,7 @@ import socket
 # Constantes
 SERVER_ADDRESS = "localhost"
 SERVER_PORT = 8087
-FOLDER_PATH = r"..\ProyectoSync"
+FOLDER_PATH = "..\ProyectoSync" 
 
 #FOLDER_PATH = "..\ProyectoSync" 
 
