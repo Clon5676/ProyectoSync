@@ -33,7 +33,9 @@ import socket
 # Constantes
 SERVER_ADDRESS = "localhost"
 SERVER_PORT = 8087
-FOLDER_PATH = "..\ProyectoSync" 
+FOLDER_PATH = r"..\ProyectoSync"
+
+#FOLDER_PATH = "..\ProyectoSync" 
 
 # Crear un socket y conectarse al servidor
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
