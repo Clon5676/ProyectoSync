@@ -54,11 +54,26 @@ import socket
 import threading
 import queue
 import os
+import argparse
 
-# Constantes
-BUFFER_SIZE = 4  # Tamaño del buffer
-MAX_THREADS = 2  # Número máximo de hilos que pueden operar en paralelo
-SERVER_PORT = 8087
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Server for folder scanning with buffer and threads.")
+parser.add_argument("port", type=int, help="Port number to listen on")
+parser.add_argument("buffer_size", type=int, help="Size of the limited buffer")
+parser.add_argument("threads", type=int, help="Number of threads to handle clients")
+args = parser.parse_args()
+
+# Server configuration
+SERVER_PORT = args.port
+BUFFER_SIZE = args.buffer_size
+MAX_THREADS = args.threads
+
+
+# # Constantes
+# BUFFER_SIZE = 4  # Tamaño del buffer
+# MAX_THREADS = 2  # Número máximo de hilos que pueden operar en paralelo
+# SERVER_PORT = 8087
+
 
 # Crear un buffer y un semáforo para controlar el acceso
 buffer = queue.Queue(BUFFER_SIZE)
