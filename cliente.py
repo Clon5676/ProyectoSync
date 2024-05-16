@@ -29,13 +29,30 @@
 
 
 import socket
+import argparse
+import time
 
-# Constantes
-SERVER_ADDRESS = "localhost"
-SERVER_PORT = 8087
-FOLDER_PATH = "..\ProyectoSync" 
+# # Constantes
+# SERVER_ADDRESS = "localhost"
+# SERVER_PORT = 8087
+# FOLDER_PATH = "..\ProyectoSync"
+ 
 
 #FOLDER_PATH = "..\ProyectoSync" 
+
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Client for folder scanning on a remote server.")
+parser.add_argument("server_address", help="Server address (IP or hostname)")
+parser.add_argument("port", type=int, help="Port number on the server")
+parser.add_argument("folder_path", help="Path to the folder to be scanned")
+args = parser.parse_args()
+
+# Server configuration
+SERVER_ADDRESS = args.server_address
+SERVER_PORT = args.port
+FOLDER_PATH = args.folder_path
+
 
 # Crear un socket y conectarse al servidor
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
