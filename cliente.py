@@ -46,15 +46,18 @@
 import socket
 import argparse
 import time
+import os
 
-# Parse command-line arguments
-parser = argparse.ArgumentParser(description="Client for folder scanning on a remote server.")
-parser.add_argument("server_address", help="Server address (IP or hostname)")
-parser.add_argument("port", type=int, help="Port number on the server")
-parser.add_argument("folder_path", help="Path to the folder to be scanned")
-args = parser.parse_args()
+class Client:
+    def __init__(self, server_ip, server_port, path_to_scan):
+        self.server_ip = server_ip
+        self.server_port = server_port
+        self.path_to_scan = path_to_scan
 
-<<<<<<< HEAD
+    def get_files_in_path(self, path):
+        files = os.listdir(path)
+        return files
+
     def start(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
             print(f'Connecting to {self.server_ip}:{self.server_port}')
@@ -68,34 +71,17 @@ args = parser.parse_args()
                 if 'Request accepted' in response:
                     break
                 time.sleep(1)
-            return self.path_to_scan  # Add this line to return the path
-=======
-# Server configuration
-SERVER_ADDRESS = args.server_address
-SERVER_PORT = args.port
-FOLDER_PATH = args.folder_path
+            files_in_path = self.get_files_in_path(self.path_to_scan)
+            return files_in_path
 
-# Crear un socket y conectarse al servidor
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((SERVER_ADDRESS, SERVER_PORT))
->>>>>>> parent of f21acf2 (codigo final)
+if __name__ == '__main__':
+    if len(sys.argv) != 4:
+        print('Usage: client.py <server_ip> <server_port> <path_to_scan>')
+        sys.exit(1)
+    server_ip = sys.argv[1]
+    server_port = int(sys.argv[2])
+    path_to_scan = sys.argv[3]
 
-# Enviar el mensaje al servidor
-client_socket.send(f"LIST {FOLDER_PATH}".encode())
-
-<<<<<<< HEAD
     client = Client(server_ip, server_port, path_to_scan)
-    path_taken = client.start()
-    print(f'The path taken was: {path_taken}')
-=======
-# Recibir la respuesta del servidor
-response = client_socket.recv(1024).decode()
-print("Server response:", response)
-
-# Recibir el contenido del folder
-folder_content = client_socket.recv(1024).decode()
-print("Folder content:", folder_content)
-
-# Cerrar la conexión con el servidor
-client_socket.close()
->>>>>>> parent of f21acf2 (codigo final)
+    files_found = client.start()
+    print(f'The files found in the path are: {files_found}')
