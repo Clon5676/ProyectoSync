@@ -1,17 +1,12 @@
 import socket
 import sys
 import time
-import os
 
 class Client:
     def __init__(self, server_ip, server_port, path_to_scan):
         self.server_ip = server_ip
         self.server_port = server_port
         self.path_to_scan = path_to_scan
-
-    def get_files_in_path(self, path):
-        files = os.listdir(path)
-        return files
 
     def start(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
@@ -26,8 +21,7 @@ class Client:
                 if 'Request accepted' in response:
                     break
                 time.sleep(1)
-            files_in_path = self.get_files_in_path(self.path_to_scan)
-            return files_in_path
+            return self.path_to_scan  # Add this line to return the path
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
@@ -38,5 +32,5 @@ if __name__ == '__main__':
     path_to_scan = sys.argv[3]
 
     client = Client(server_ip, server_port, path_to_scan)
-    files_found = client.start()
-    print(f'The files found in the path are: {files_found}')
+    path_taken = client.start()
+    print(f'The path taken was: {path_taken}')
